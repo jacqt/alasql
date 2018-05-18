@@ -1,7 +1,7 @@
-//! AlaSQL v0.4.5-develop-1576 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT
+//! AlaSQL v0.4.5 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT
 /*
 @module alasql
-@version 0.4.5-develop-1576
+@version 0.4.5
 
 AlaSQL - JavaScript SQL database
 © 2014-2016	Andrey Gershun & Mathias Rangel Wulff
@@ -196,9 +196,9 @@ if (typeof Worker !== 'undefined') {
 			var js = "importScripts('";
 			js += path;
 			js +=
-				"');self.onmessage = function(event) {" +
-				'alasql(event.data.sql,event.data.params, function(data){' +
-				'postMessage({id:event.data.id, data:data});});}';
+				"');alasql.options.errorlog=true;self.onmessage = function(event) {" +
+				'alasql(event.data.sql,event.data.params, function(data, error){' +
+				'postMessage({id:event.data.id, data:data, error: error ? { message: error.message } : undefined });});}';
 
 			var blob = new Blob([js], {type: 'text/plain'});
 			alasql.webworker = new Worker(URL.createObjectURL(blob));
@@ -206,7 +206,7 @@ if (typeof Worker !== 'undefined') {
 			alasql.webworker.onmessage = function(event) {
 				var id = event.data.id;
 
-				alasql.buffer[id](event.data.data);
+				alasql.buffer[id](event.data.data, event.data.error);
 				delete alasql.buffer[id];
 			};
 
@@ -239,7 +239,8 @@ alasql.lastid = 0;
 /** @type {object} */
 alasql.buffer = {};
 
-alasql.worker();
+// alasql.worker();
 
 return alasql;
 }));
+
