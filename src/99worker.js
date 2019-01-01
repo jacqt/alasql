@@ -40,17 +40,21 @@ if (typeof Worker !== 'undefined') {
 			var js = "importScripts('";
 			js += path;
 			js +=
-				"');self.onmessage = function(event) {" +
+				"');alasql.options.errorlog=true;self.onmessage = function(event) {" +
 				'alasql(event.data.sql,event.data.params, function(data){' +
-				'postMessage({id:event.data.id, data:data});});}';
+				'postMessage({id:event.data.id, data:data, error: error ? { message: error.message } : undefined });});}';
 
-			var blob = new Blob([js], {type: 'text/plain'});
-			alasql.webworker = new Worker(URL.createObjectURL(blob));
+      try {
+        var blob = new Blob([js], {type: 'text/plain'});
+        alasql.webworker = new Worker(URL.createObjectURL(blob));
+      } catch (err) {
+        throw err
+      }
 
 			alasql.webworker.onmessage = function(event) {
 				var id = event.data.id;
 
-				alasql.buffer[id](event.data.data);
+				alasql.buffer[id](event.data.data, event.data.error);
 				delete alasql.buffer[id];
 			};
 

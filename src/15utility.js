@@ -283,7 +283,11 @@ utils.isReactNative = (function() {
 })();
 
 utils.hasIndexedDB = (function() {
-	return !!utils.global.indexedDB;
+  try {
+    return !!utils.global.indexedDB;
+  } catch (err) {
+    return false
+  }
 })();
 
 utils.isArray = function(obj) {
