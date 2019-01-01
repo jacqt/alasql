@@ -200,8 +200,12 @@ if (typeof Worker !== 'undefined') {
 				'alasql(event.data.sql,event.data.params, function(data, error){' +
 				'postMessage({id:event.data.id, data:data, error: error ? { message: error.message } : undefined });});}';
 
-			var blob = new Blob([js], {type: 'text/plain'});
-			alasql.webworker = new Worker(URL.createObjectURL(blob));
+      try {
+        var blob = new Blob([js], {type: 'text/plain'});
+        alasql.webworker = new Worker(URL.createObjectURL(blob));
+      } catch (err) {
+        throw err;
+      }
 
 			alasql.webworker.onmessage = function(event) {
 				var id = event.data.id;
