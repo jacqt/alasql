@@ -1,7 +1,7 @@
-//! AlaSQL v0.4.5-develop-1576 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT
+//! AlaSQL v0.4.5-develop-1585 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT
 /*
 @module alasql
-@version 0.4.5-develop-1576
+@version 0.4.5-develop-1585
 
 AlaSQL - JavaScript SQL database
 © 2014-2016	Andrey Gershun & Mathias Rangel Wulff
@@ -138,7 +138,7 @@ var alasql = function(sql, params, cb, scope) {
 	Current version of alasql 
  	@constant {string} 
 */
-alasql.version = '0.4.5-develop-1576';
+alasql.version = '0.4.5-develop-1585';
 
 /**
 	Debug flag
@@ -3428,7 +3428,11 @@ utils.isReactNative = (function() {
 })();
 
 utils.hasIndexedDB = (function() {
-	return !!utils.global.indexedDB;
+	try {
+		return !!utils.global.indexedDB;
+	} catch (err) {
+		return false;
+	}
 })();
 
 utils.isArray = function(obj) {
@@ -4143,13 +4147,13 @@ if (!Array.isArray) {
 */
 
 var xlsnc = (utils.xlsnc = function(i) {
-	var addr = String.fromCharCode(65 + i % 26);
+	var addr = String.fromCharCode(65 + (i % 26));
 	if (i >= 26) {
 		i = ((i / 26) | 0) - 1;
-		addr = String.fromCharCode(65 + i % 26) + addr;
+		addr = String.fromCharCode(65 + (i % 26)) + addr;
 		if (i > 26) {
 			i = ((i / 26) | 0) - 1;
-			addr = String.fromCharCode(65 + i % 26) + addr;
+			addr = String.fromCharCode(65 + (i % 26)) + addr;
 		}
 	}
 	return addr;
@@ -4907,24 +4911,28 @@ if (!utils.global.Promise) {
 				e._state === it
 					? S(t, e._result)
 					: e._state === st
-						? j(t, e._result)
-						: E(
-								e,
-								void 0,
-								function(e) {
-									g(t, e);
-								},
-								function(e) {
-									j(t, e);
-								}
-							);
+					? j(t, e._result)
+					: E(
+							e,
+							void 0,
+							function(e) {
+								g(t, e);
+							},
+							function(e) {
+								j(t, e);
+							}
+					  );
 			}
 			function w(t, n, r) {
 				n.constructor === t.constructor && r === et && constructor.resolve === nt
 					? b(t, n)
 					: r === ut
-						? j(t, ut.error)
-						: void 0 === r ? S(t, n) : e(r) ? m(t, n, r) : S(t, n);
+					? j(t, ut.error)
+					: void 0 === r
+					? S(t, n)
+					: e(r)
+					? m(t, n, r)
+					: S(t, n);
 			}
 			function g(e, n) {
 				e === n ? j(e, _()) : t(n) ? w(e, n, v(n)) : S(e, n);
@@ -5014,10 +5022,10 @@ if (!utils.global.Promise) {
 						? function(n, r) {
 								for (var o = t.length, i = 0; o > i; i++)
 									e.resolve(t[i]).then(n, r);
-							}
+						  }
 						: function(t, e) {
 								e(new TypeError('You must pass an array to race.'));
-							}
+						  }
 				);
 			}
 			function F(t) {
@@ -5048,14 +5056,14 @@ if (!utils.global.Promise) {
 					this.promise[rt] || k(this.promise),
 					Array.isArray(e)
 						? ((this._input = e),
-							(this.length = e.length),
-							(this._remaining = e.length),
-							(this._result = new Array(this.length)),
-							0 === this.length
+						  (this.length = e.length),
+						  (this._remaining = e.length),
+						  (this._result = new Array(this.length)),
+						  0 === this.length
 								? S(this.promise, this._result)
 								: ((this.length = this.length || 0),
-									this._enumerate(),
-									0 === this._remaining && S(this.promise, this._result)))
+								  this._enumerate(),
+								  0 === this._remaining && S(this.promise, this._result)))
 						: j(this.promise, U());
 			}
 			function U() {
@@ -5084,7 +5092,7 @@ if (!utils.global.Promise) {
 				? Array.isArray
 				: function(t) {
 						return '[object Array]' === Object.prototype.toString.call(t);
-					};
+				  };
 			var B,
 				G,
 				H,
@@ -5107,7 +5115,13 @@ if (!utils.global.Promise) {
 				tt = new Array(1e3);
 			H = Z
 				? o()
-				: X ? s() : $ ? u() : void 0 === R && 'function' == typeof require ? f() : c();
+				: X
+				? s()
+				: $
+				? u()
+				: void 0 === R && 'function' == typeof require
+				? f()
+				: c();
 			var et = l,
 				nt = h,
 				rt = Math.random()
@@ -5185,10 +5199,10 @@ if (!utils.global.Promise) {
 			'function' == typeof define && define.amd
 				? define(function() {
 						return vt;
-					})
+				  })
 				: 'undefined' != typeof module && module.exports
-					? (module.exports = vt)
-					: 'undefined' != typeof this && (this.ES6Promise = vt),
+				? (module.exports = vt)
+				: 'undefined' != typeof this && (this.ES6Promise = vt),
 				dt();
 		}.call(this));
 
@@ -7203,7 +7217,7 @@ function doLimit(query) {
 		}
 		var limit;
 		if (query.percent) {
-			limit = ((query.data.length * query.limit / 100) | 0) + offset;
+			limit = (((query.data.length * query.limit) / 100) | 0) + offset;
 		} else {
 			limit = (query.limit | 0) + offset;
 		}
@@ -7299,8 +7313,7 @@ var preIndex = function(query) {
 					// Save index to original table
 					alasql.databases[source.databaseid].tables[source.tableid].indices[
 						hash(source.onrightfns + '`' + source.srcwherefns)
-					] =
-						source.ix;
+					] = source.ix;
 				}
 			}
 
@@ -7350,8 +7363,7 @@ var preIndex = function(query) {
 				if (!alasql.databases[source.databaseid].engineid) {
 					alasql.databases[source.databaseid].tables[source.tableid].indices[
 						hash(source.wxleftfns + '`')
-					] =
-						source.ix;
+					] = source.ix;
 				}
 			}
 			// Apply where filter to reduces rows
@@ -9088,7 +9100,7 @@ yy.Select.prototype.compileGroup = function(query) {
 		}
 
 		/*
-		*/
+		 */
 		//		s += self.columns.map(function(col){
 
 		s += query.selectGroup
@@ -11918,7 +11930,7 @@ alasql.aggr.GROUP_CONCAT = function(v, s, stage) {
 		s += ',' + v;
 		return s;
 	}
-	return s; //todo: add option to select delimitor
+	return s;
 };
 
 alasql.aggr.MEDIAN = function(v, s, stage) {
@@ -11966,7 +11978,7 @@ alasql.aggr.QUART = function(v, s, stage, nth) {
 
 		nth = !nth ? 1 : nth;
 		var r = s.sort();
-		var p = nth * (r.length + 1) / 4;
+		var p = (nth * (r.length + 1)) / 4;
 		if (Number.isInteger(p)) {
 			return r[p - 1]; //Integer value
 		}
@@ -13366,7 +13378,7 @@ stdfn.YEAR = function(d) {
 
 var PERIODS = {
 	year: 1000 * 3600 * 24 * 365,
-	quarter: 1000 * 3600 * 24 * 365 / 4,
+	quarter: (1000 * 3600 * 24 * 365) / 4,
 	month: 1000 * 3600 * 24 * 30,
 	week: 1000 * 3600 * 24 * 7,
 	day: 1000 * 3600 * 24,
@@ -15866,7 +15878,7 @@ function scrollTo(element, to, duration) {
 		return;
 	}
 	var difference = to - element.scrollTop;
-	var perTick = difference / duration * 10;
+	var perTick = (difference / duration) * 10;
 
 	setTimeout(function() {
 		if (element.scrollTop === to) {
@@ -19413,17 +19425,21 @@ if (typeof Worker !== 'undefined') {
 			var js = "importScripts('";
 			js += path;
 			js +=
-				"');self.onmessage = function(event) {" +
+				"');alasql.options.errorlog=true;self.onmessage = function(event) {" +
 				'alasql(event.data.sql,event.data.params, function(data){' +
-				'postMessage({id:event.data.id, data:data});});}';
+				'postMessage({id:event.data.id, data:data, error: error ? { message: error.message } : undefined });});}';
 
-			var blob = new Blob([js], {type: 'text/plain'});
-			alasql.webworker = new Worker(URL.createObjectURL(blob));
+			try {
+				var blob = new Blob([js], {type: 'text/plain'});
+				alasql.webworker = new Worker(URL.createObjectURL(blob));
+			} catch (err) {
+				throw err;
+			}
 
 			alasql.webworker.onmessage = function(event) {
 				var id = event.data.id;
 
-				alasql.buffer[id](event.data.data);
+				alasql.buffer[id](event.data.data, event.data.error);
 				delete alasql.buffer[id];
 			};
 
@@ -19556,7 +19572,7 @@ var saveAs =
 									: reader.result.replace(
 											/^data:[^;]*;/,
 											'data:attachment/file;'
-										);
+									  );
 								var popup = view.open(url, '_blank');
 								if (!popup) view.location.href = url;
 								url = undefined; // release reference before dispatching
