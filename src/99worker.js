@@ -41,15 +41,15 @@ if (typeof Worker !== 'undefined') {
 			js += path;
 			js +=
 				"');alasql.options.errorlog=true;self.onmessage = function(event) {" +
-				'alasql(event.data.sql,event.data.params, function(data){' +
+				'alasql(event.data.sql,event.data.params, function(data, error){' +
 				'postMessage({id:event.data.id, data:data, error: error ? { message: error.message } : undefined });});}';
 
-      try {
-        var blob = new Blob([js], {type: 'text/plain'});
-        alasql.webworker = new Worker(URL.createObjectURL(blob));
-      } catch (err) {
-        throw err
-      }
+			try {
+				var blob = new Blob([js], {type: 'text/plain'});
+				alasql.webworker = new Worker(URL.createObjectURL(blob));
+			} catch (err) {
+				throw err;
+			}
 
 			alasql.webworker.onmessage = function(event) {
 				var id = event.data.id;
