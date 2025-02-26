@@ -46,7 +46,12 @@ SOFTWARE.
 */
 
 (function (root, factory) {
-    root.alasql = factory();
+    if (typeof exports === 'object') {
+    	/** alasql main function */
+        module.exports = factory();
+    } else {
+        root.alasql = factory();
+	}
 }(globalThis, function () {
 
 /**
